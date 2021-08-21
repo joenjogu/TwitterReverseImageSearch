@@ -12,7 +12,6 @@ def create_api(
     try:
         api = tweepy.API(auth)
         api.verify_credentials()
-        print(api.home_timeline())
         return api
     except Exception as e:
         raise e
