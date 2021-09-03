@@ -39,9 +39,9 @@ def get_media_urls(api, latest_status_ids):
         media_urls = urls_getter.get_media_url(tweet)
         if media_urls:
             # print(media_urls) 
-            tweet_to_mention_link = []
+            tweet_to_mention_link = ""
             for status_id in flattened_status_ids:
-                if tweet.id == status_id: tweet_to_mention_link = [status_id, tweet.id]
+                if tweet.id == status_id: tweet_to_mention_link = f"{status_id},{tweet.id}"
 
             urls_list.append(media_urls)
             new_dict = {tweet_to_mention_link : urls_list}
