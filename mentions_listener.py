@@ -22,16 +22,27 @@ def process_status(status):
     status_ids = []
     for tweet in status:
         in_reply_to_id = tweet.in_reply_to_status_id
-        status_ids.append(in_reply_to_id)
-        HANDLED_STATUSES.add(in_reply_to_id)
-    return status_ids
+        if (in_reply_to_id):
+            original_and_mention_ids = [tweet.id, tweet.in_reply_to_status_id]
+            HANDLED_STATUSES.add(original_and_mention_ids)
+            # print(original_and_mention_ids)
+    return HANDLED_STATUSES
     
 def get_media_urls(api, latest_status_ids):
-    # print(latest_status_ids)
-    flattened_status_ids = list(itertools.chain.from_iterable(latest_status_ids))
-    status_objects = api.statuses_lookup(flattened_status_ids)
-    print(len(status_objects), len(flattened_status_ids))
     urls_getter = Url_Retriever.GetTweetMediaUrl(flattened_status_ids)
+    # flattened_status_ids = list(itertools.chain.from_iterable(latest_status_ids))
+    # print(flattened_status_ids)
+    # status_objects = api.statuses_lookup(flattened_status_ids)
+    for lis in latest_status_ids:
+        tweet = api.get_status(lis[0])
+        urls_list = []
+        media_urls = urls_getter.get_media_url(tweet)
+        if media_urls:
+            urls_list.append(media_urls)
+
+
+    print(len(status_objects), len(flattened_status_ids))
+    
 
     status_media_urls = {}
     for tweet in status_objects:
