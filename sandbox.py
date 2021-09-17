@@ -3,52 +3,48 @@ import logging
 import api_auth
 import Url_Retriever
 
-logging = logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
+TRACK_TAG = "@FindImage"
+HANDLED_STATUSES = set()
 api = api_auth.create_api()
 
-# tweet = api.statuses_lookup([1280782192713531392])
 
-# print (tweet[0])
-
-# mentions = api.mentions_timeline()
-HANDLED_STATUSES = set()
 class MentionsStreamer(tweepy.StreamListener):
     def on_status(self, status):
-        print(f"the tweet id is {status.id}")
+        logging.debug(f"the tweet id is {status.id}")
         root_status_id = status.in_reply_to_status_id
         root_status = get_root_status(root_status_id)
-        media_urls = get_media_urls(root_status_id)
-        root_username = root_status.user.screen_name
+        media_urls = get_media_urls(root_status)
+        # root_username = root_status.user.screen_name
 
         if media_urls:
-            for url in media_urls:
-                reverse_image_search(url)
-                tweet_body = f"Hey! I think we found that image. \
-                    Click the link below 👇 {url}"
-                is_reply_successful = tweet_with_reply_option(
+            for url in media_urls[0]:
+                # reverse_image_search(url)
+                logging.debug(f"chek this url out {url}")
+                tweet_body = f"Hey! I think we found that image. Click the link below 👇 to check it out {url}"
+                is_reply_successful = tweet_or_reply(
                     status_id=status.id,
-                    tweet_body="get media url",
-                    reply_username=root_username
+                    tweet_body=tweet_body,
+                    reply_username=status.user.screen_name
                     )
                 if is_reply_successful:
                     HANDLED_STATUSES.add(is_reply_successful)
 
         
     def on_error(self, status_code):
-        print(f"got an error code: {status_code}")
+        logging.error(f"got an error code: {status_code}")
 
 def initialise_streamer():
-    print("inside initialise_streamer")
     streamer = MentionsStreamer()
-    print("created streamer")
     stream = tweepy.Stream(auth = api.auth, listener = streamer)
-    print("initialised streamer")
-    stream.filter(track = ['@joe_njogu'], is_async = True)
-    print("streaming")
+    logging.debug("initialised streamer")
+    stream.filter(track = [TRACK_TAG], is_async = True)
+    logging.debug("streaming")
+    # stream.disconnect()
+
 
 def get_root_status(status_id):
     root_status = api.get_status(status_id)
-
     return root_status
 
 def get_media_urls(status):
@@ -59,7 +55,7 @@ def get_media_urls(status):
         media_urls_list.append(media_urls)
         return media_urls_list
 
-def tweet_with_reply_option(status_id, tweet_body, reply_username=None):
+def tweet_or_reply(status_id, tweet_body, reply_username=None):
     if reply_username:
         tweet_body = f"@{reply_username} {tweet_body}"
     try:
