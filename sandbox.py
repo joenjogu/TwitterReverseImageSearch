@@ -21,7 +21,8 @@ class MentionsStreamer(tweepy.StreamListener):
             for url in media_urls[0]:
                 # reverse_image_search(url)
                 logging.debug(f"chek this url out {url}")
-                tweet_body = f"Hey! I think we found that image. Click the link below 👇 to check it out {url}"
+                tweet_body = "Hey! I think we found that image."
+                f"Click the link below 👇 to check it out {url}"
                 is_reply_successful = tweet_or_reply(
                     status_id=status.id,
                     tweet_body=tweet_body,
@@ -30,15 +31,15 @@ class MentionsStreamer(tweepy.StreamListener):
                 if is_reply_successful:
                     HANDLED_STATUSES.add(is_reply_successful)
 
-        
     def on_error(self, status_code):
         logging.error(f"got an error code: {status_code}")
 
+
 def initialise_streamer():
     streamer = MentionsStreamer()
-    stream = tweepy.Stream(auth = api.auth, listener = streamer)
+    stream = tweepy.Stream(auth=api.auth, listener=streamer)
     logging.debug("initialised streamer")
-    stream.filter(track = [TRACK_TAG], is_async = True)
+    stream.filter(track=[TRACK_TAG], is_async=True)
     logging.debug("streaming")
     # stream.disconnect()
 
@@ -46,6 +47,7 @@ def initialise_streamer():
 def get_root_status(status_id):
     root_status = api.get_status(status_id)
     return root_status
+
 
 def get_media_urls(status):
     urls_getter = Url_Retriever.GetTweetMediaUrl(status)
@@ -55,11 +57,15 @@ def get_media_urls(status):
         media_urls_list.append(media_urls)
         return media_urls_list
 
+
 def tweet_or_reply(status_id, tweet_body, reply_username=None):
     if reply_username:
         tweet_body = f"@{reply_username} {tweet_body}"
     try:
-        status = api.update_status(status = tweet_body, in_reply_to_status_id = status_id)
+        status = api.update_status(
+            status=tweet_body,
+            in_reply_to_status_id=status_id
+            )
         logging.debug(f"status updated with id {status.id}")
         return status.id
 
