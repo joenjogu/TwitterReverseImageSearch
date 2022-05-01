@@ -1,8 +1,9 @@
+import itertools
+from apscheduler.schedulers.blocking import BlockingScheduler
 import tweepy
 import api_auth
 import url_retriever
-import itertools
-from apscheduler.schedulers.blocking import BlockingScheduler
+
 
 HANDLED_STATUSES = set()
 scheduler = BlockingScheduler()
@@ -29,7 +30,7 @@ def process_status(status):
     return HANDLED_STATUSES
     
 def get_media_urls(api, latest_status_ids):
-    urls_getter = Url_Retriever.GetTweetMediaUrl(flattened_status_ids)
+    urls_getter = url_retriever.GetTweetMediaUrl(flattened_status_ids)
     # flattened_status_ids = list(itertools.chain.from_iterable(latest_status_ids))
     # print(flattened_status_ids)
     # status_objects = api.statuses_lookup(flattened_status_ids)
