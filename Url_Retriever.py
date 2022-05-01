@@ -1,6 +1,7 @@
-import api_auth
 import itertools
 import time
+import api_auth
+
 
 class GetTweetMediaUrl():
     api = api_auth.create_api()
