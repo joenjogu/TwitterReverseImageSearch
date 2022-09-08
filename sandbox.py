@@ -50,7 +50,7 @@ def get_root_status(status_id):
 
 
 def get_media_urls(status):
-    urls_getter = Url_Retriever.GetTweetMediaUrl(status)
+    urls_getter = url_retriever.GetTweetMediaUrl(status)
     media_urls = urls_getter.get_media_url(status)
     media_urls_list = []
     if media_urls:
