@@ -1,7 +1,7 @@
 import tweepy
 import logging
 import api_auth
-import Url_Retriever
+import url_retriever
 
 logging.basicConfig(level=logging.DEBUG)
 TRACK_TAG = "@FindImage"
